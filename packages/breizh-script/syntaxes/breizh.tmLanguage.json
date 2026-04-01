@@ -1,0 +1,255 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Breizh Script",
+  "scopeName": "source.breizh",
+  "fileTypes": [".bzh", ".kreiz", ".galette"],
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords-control" },
+    { "include": "#keywords-declaration" },
+    { "include": "#keywords-module" },
+    { "include": "#keywords-error" },
+    { "include": "#keywords-async" },
+    { "include": "#constants" },
+    { "include": "#builtins" },
+    { "include": "#operators" },
+    { "include": "#punctuation" },
+    { "include": "#identifiers" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.breizh",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.breizh",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.breizh",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.breizh",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.breizh",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.breizh",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.template.breizh",
+          "begin": "`",
+          "end": "`",
+          "patterns": [
+            {
+              "name": "constant.character.escape.breizh",
+              "match": "\\\\."
+            },
+            {
+              "name": "meta.template.expression.breizh",
+              "begin": "\\$\\{",
+              "end": "\\}",
+              "patterns": [
+                { "include": "$self" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.breizh",
+          "match": "\\b(?:0[xX][0-9a-fA-F]+|0[oO][0-7]+|0[bB][01]+|[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)\\b"
+        }
+      ]
+    },
+    "keywords-control": {
+      "patterns": [
+        {
+          "name": "keyword.control.conditional.breizh",
+          "match": "\\b(krampouz|gwinizh_du)\\b",
+          "comment": "if / else — Le choix crepe fondamental"
+        },
+        {
+          "name": "keyword.control.loop.breizh",
+          "match": "\\bbilig\\b",
+          "comment": "for / while — La plaque qui tourne"
+        },
+        {
+          "name": "keyword.control.flow.breizh",
+          "match": "\\bserviñ\\b",
+          "comment": "return — On sert le resultat"
+        }
+      ]
+    },
+    "keywords-declaration": {
+      "patterns": [
+        {
+          "name": "storage.type.breizh",
+          "match": "\\b(menhir|korriganed|chouchenn)\\b",
+          "comment": "const / let / var — Pierre, korrigans et hydromel"
+        },
+        {
+          "name": "storage.type.function.breizh",
+          "match": "\\brecette\\b",
+          "comment": "function — Une bonne recette"
+        },
+        {
+          "name": "storage.type.class.breizh",
+          "match": "\\bcrêperie\\b",
+          "comment": "class — L'etablissement"
+        }
+      ]
+    },
+    "keywords-module": {
+      "patterns": [
+        {
+          "name": "keyword.control.import.breizh",
+          "match": "\\bdegemer\\b",
+          "comment": "import — Bienvenue au module"
+        },
+        {
+          "name": "keyword.control.export.breizh",
+          "match": "\\bkenavo\\b",
+          "comment": "export — Au revoir le module"
+        }
+      ]
+    },
+    "keywords-error": {
+      "patterns": [
+        {
+          "name": "keyword.control.trycatch.breizh",
+          "match": "\\b(tastañ|fest_noz|taol)\\b",
+          "comment": "try / catch / throw — Gouter, fete, lancer"
+        }
+      ]
+    },
+    "keywords-async": {
+      "patterns": [
+        {
+          "name": "keyword.control.async.breizh",
+          "match": "\\b(war_an_hent|gortoz)\\b",
+          "comment": "async / await — Navigation maritime"
+        },
+        {
+          "name": "support.type.promise.breizh",
+          "match": "\\bpromesse_de_marin\\b",
+          "comment": "Promise — Il reviendra... peut-etre"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.true.breizh",
+          "match": "\\bbeurre_salé\\b",
+          "comment": "true — La verite absolue"
+        },
+        {
+          "name": "constant.language.boolean.false.breizh",
+          "match": "\\bbeurre_doux\\b",
+          "comment": "false — L'heresie"
+        },
+        {
+          "name": "constant.language.null.breizh",
+          "match": "\\bmarée_basse\\b",
+          "comment": "null — Il n'y a plus rien"
+        },
+        {
+          "name": "constant.language.undefined.breizh",
+          "match": "\\bbrumañ\\b",
+          "comment": "undefined — Le brouillard"
+        }
+      ]
+    },
+    "builtins": {
+      "patterns": [
+        {
+          "name": "support.function.console.breizh",
+          "match": "\\bsonner_du_biniou\\b",
+          "comment": "console.log — Le biniou pour logger"
+        },
+        {
+          "name": "support.function.debug.breizh",
+          "match": "\\bpesketa\\b",
+          "comment": "debug — Pecher les bugs"
+        },
+        {
+          "name": "support.function.deploy.breizh",
+          "match": "\\ben_avant_deux\\b",
+          "comment": "deploy — Larguer les amarres"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.breizh",
+          "match": "===|!==|==|!=|<=|>=|<|>|&&|\\|\\||!|\\+|-|\\*|/|%|=|\\+=|-=|\\*=|/="
+        },
+        {
+          "name": "keyword.operator.spread.breizh",
+          "match": "\\.\\.\\."
+        },
+        {
+          "name": "keyword.operator.arrow.breizh",
+          "match": "=>"
+        }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.definition.block.breizh",
+          "match": "[{}]"
+        },
+        {
+          "name": "punctuation.definition.parameters.breizh",
+          "match": "[()]"
+        },
+        {
+          "name": "punctuation.definition.array.breizh",
+          "match": "[\\[\\]]"
+        },
+        {
+          "name": "punctuation.separator.breizh",
+          "match": "[;,]"
+        },
+        {
+          "name": "punctuation.accessor.breizh",
+          "match": "\\."
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "variable.other.breizh",
+          "match": "\\b[a-zA-Z_àâäéèêëïîôùûüÿçñ][a-zA-Z0-9_àâäéèêëïîôùûüÿçñ]*\\b"
+        }
+      ]
+    }
+  }
+}

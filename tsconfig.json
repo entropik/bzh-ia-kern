@@ -1,0 +1,78 @@
+{
+  // ============================================================
+  // ⚙️ Kefluniadur TypeScript — Configuration TypeScript
+  // BZH-IA-KERN — Monorepo Workspace Root
+  // ============================================================
+  // "Ar c'hefluniadur mat a zo diazez ar c'hod mat"
+  // (La bonne configuration est la base du bon code)
+  // ============================================================
+
+  "compilerOptions": {
+    // === Yezh ha stumm — Langage et cible ===
+    // Kempunañ evit Node.js 20 — Compiler pour Node.js 20
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "lib": ["ES2022"],
+
+    // === Reolennoù strizh — Règles strictes ===
+    // Evel ar beurre salé : ne vez ket komprometiñ war ar c'halite
+    // (Comme le beurre salé : on ne compromet pas sur la qualité)
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // === Diaz-emzalc'h — Interopérabilité ===
+    // Evit mont a-du gant ar moduloù anglo-sakson (dre ret)
+    // (Pour être compatible avec les modules anglo-saxons, par nécessité)
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+
+    // === Ar bern-diaz — Le build ===
+    // An disoc'h a vo lakaet e dist/ — La sortie ira dans dist/
+    "outDir": "dist",
+    "rootDir": ".",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+
+    // === Dreist-doareoù — Options avancées ===
+    // Gwellaat ar c'hompilañ — Améliorer la compilation
+    "skipLibCheck": true,
+    "incremental": true,
+    "composite": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+  },
+
+  // === Restroù da gompilañ — Fichiers à compiler ===
+  "include": [
+    "packages/*/src/**/*.ts",
+    "examples/**/*.ts"
+  ],
+
+  // === Restroù da leuskel a-gostez — Fichiers à ignorer ===
+  // Ne vez ket kompilet ar restroù-mañ (evel ne vez ket debret ar c'hrampouezh losket)
+  // (On ne compile pas ces fichiers, comme on ne mange pas les crêpes brûlées)
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "coverage"
+  ],
+
+  // === Referañsoù ar pakadoù — Références des packages ===
+  "references": [
+    { "path": "packages/breizh-script" },
+    { "path": "packages/krampouz-annotator" },
+    { "path": "packages/middleware-cidre" },
+    { "path": "packages/emoji-commits" }
+  ]
+}

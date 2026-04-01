@@ -1,0 +1,107 @@
+name: "🔥 Bug Report — Crêpe Brûlée"
+description: "Signalez un bug qui a fait cramer la crêpe. Aucune galette ne mérite de finir carbonisée."
+title: "[🔥 BUG]: "
+labels: ["fest-noz", "krampouezhenn-losket"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🔥 Rapport de Crêpe Brûlée
+
+        Demat ! Merci de prendre le temps de signaler ce bug.
+        Plus votre rapport est précis, plus vite nous pourrons sauver la prochaine crêpe.
+
+        *"Ar c'hod fall a ra krampouezhenn losket"* — Un mauvais code fait une crêpe brûlée.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "🥞 Description du bug"
+      description: "Décrivez le bug de manière claire. Comme si vous expliquiez au crêpier que votre galette-saucisse n'a pas de saucisse."
+      placeholder: "Le module krampouz-annotator lance une BeurreInsuffisantError quand le coefficient de marée dépasse 95..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: "📋 Étapes de reproduction (Recette du désastre)"
+      description: "Étapes pour reproduire le bug, comme une recette de cuisine qui tourne mal."
+      placeholder: |
+        1. Préchauffer le bilig avec `npm run bilig`
+        2. Étaler la pâte avec `krampouz annotate --mode=complet`
+        3. Observer que la galette colle au bilig
+        4. Paniquer
+      value: |
+        1.
+        2.
+        3.
+        4. 🔥 Le bug se manifeste ici
+    validations:
+      required: true
+
+  - type: dropdown
+    id: carbonisation
+    attributes:
+      label: "🌡️ Niveau de carbonisation"
+      description: "À quel point la crêpe est-elle brûlée ?"
+      options:
+        - "🟡 Légèrement dorée — Bug mineur, cosmétique"
+        - "🟠 Croustillante suspecte — Bug fonctionnel, contournable"
+        - "🔴 Franchement cramée — Bug bloquant, pas de workaround"
+        - "⚫ Charbon breton — Crash total, fumée noire, appeler les pompiers de Quimper"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: beurre-mode
+    attributes:
+      label: "🧈 Mode beurre utilisé"
+      description: "Quel mode beurre était actif au moment du bug ?"
+      options:
+        - "Salé (par défaut, recommandé)"
+        - "Demi-sel (expérimental)"
+        - "Doux (non supporté — c'est peut-être la cause du bug)"
+        - "Bordier (premium)"
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: "💻 Environnement"
+      description: "Votre configuration technique. Pensez-y comme la description de votre bilig."
+      placeholder: |
+        - OS : Ubuntu 22.04 / macOS Sonoma / Breizh OS 4.0
+        - Node.js : v20.x
+        - Coefficient de marée : 87
+        - Région Bretonne : Penn-ar-Bed
+        - Bilig : modèle Krampouz Billig Braz 40cm
+      value: |
+        - OS :
+        - Node.js :
+        - Coefficient de marée :
+        - Région Bretonne :
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: "📜 Logs (fumée du bilig)"
+      description: "Collez ici les logs pertinents. La fumée nous aide à comprendre d'où vient le brûlé."
+      render: shell
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "✅ Checklist du crêpier consciencieux"
+      options:
+        - label: "J'ai vérifié que le bug n'est pas déjà signalé (pas de doublon de crêpe)"
+          required: true
+        - label: "J'ai utilisé du beurre salé (pas du doux, soyons sérieux)"
+          required: false
+        - label: "J'ai vérifié le coefficient de marée avant de lancer le build"
+          required: false

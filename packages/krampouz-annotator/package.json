@@ -1,0 +1,56 @@
+{
+  "name": "@bzh-ia-kern/krampouz-annotator",
+  "version": "2.0.0",
+  "description": "AI-powered code quality analysis through the lens of Breton crêpe-making excellence. Leveraging 15 years of computational gastronomy research to deliver actionable, artisanal code insights.",
+  "keywords": [
+    "code-quality",
+    "static-analysis",
+    "krampouz",
+    "bretagne",
+    "crepe",
+    "bilig",
+    "beurre-sale",
+    "lint",
+    "metrics",
+    "devex"
+  ],
+  "license": "MIT",
+  "author": "Bzh IA Kern <noreply@bzh-ia-kern.dev>",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "analyze": "ts-node src/index.ts --analyze",
+    "lint-krampouz": "ts-node src/index.ts --lint",
+    "score": "ts-node src/index.ts --score",
+    "calibrate-bilig": "ts-node src/index.ts --calibrate",
+    "rapport-complet": "ts-node src/index.ts --full-report",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "cli-table3": "^0.6.3",
+    "commander": "^12.0.0",
+    "figures": "^6.0.1",
+    "ora": "^8.0.1",
+    "typescript": "^5.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bzh-ia-kern/bzh-ia-kern",
+    "directory": "packages/krampouz-annotator"
+  }
+}

@@ -1,0 +1,99 @@
+name: "🧈 Feature Request — Recette Beurre Salé"
+description: "Proposez une amélioration digne du beurre Bordier. Chaque feature doit apporter du croustillant."
+title: "[🧈 FEATURE]: "
+labels: ["amelioration", "beurre-sale-approved"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🧈 Nouvelle Recette — Feature Request
+
+        Demat ! Vous avez une idée pour rendre BZH-IA-KERN encore plus croustillant ?
+        Comme une bonne recette, une bonne feature commence par de bons ingrédients.
+
+        *"Gwell eo beurre salé eget beurre dous"* — Mieux vaut du beurre salé que du beurre doux.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "🥞 Description de la recette"
+      description: "Décrivez la feature que vous proposez. Soyez précis, comme un crêpier qui partage sa recette secrète."
+      placeholder: "Il serait intéressant d'ajouter un mode 'Galette Complète' qui combine le linting, les tests et le build en une seule commande, comme une galette complète combine œuf, jambon et fromage..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: quantite-beurre
+    attributes:
+      label: "🧈 Quantité de beurre nécessaire"
+      description: "Quelle est l'ampleur de la feature ? Le beurre est notre unité de mesure de complexité."
+      options:
+        - "🫧 Une noisette — Petit ajustement, rapide à implémenter"
+        - "🧈 Une belle noix — Feature moyenne, quelques jours de cuisson"
+        - "🧱 Une plaquette entière — Grosse feature, sprint complet"
+        - "🏭 Un stock Bordier — Refonte majeure, on réserve le fest-noz pour la release"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: croustillance
+    attributes:
+      label: "✨ Impact sur la croustillance"
+      description: "Comment cette feature améliore-t-elle l'expérience développeur ?"
+      options:
+        - "🥞 Moelleuse — Amélioration de confort, DX plus douce"
+        - "🥞✨ Dorée — Performance améliorée, temps de build réduit"
+        - "🥞🔥 Croustillante — Nouvelle capacité majeure, game-changer"
+        - "🥞💥 Craquante — Feature révolutionnaire, disruption du marché de la crêpe IA"
+    validations:
+      required: true
+
+  - type: textarea
+    id: ingredients
+    attributes:
+      label: "📝 Ingrédients techniques"
+      description: "Détails techniques — quels packages, APIs ou modifications seraient nécessaires ?"
+      placeholder: |
+        - Ajouter une intégration avec l'API SHOM v3
+        - Nouveau module `galette-complete` dans packages/
+        - Modifier le BiligRuntimeEnvironment pour supporter le mode 4 feux
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "🔄 Recettes alternatives envisagées"
+      description: "Avez-vous envisagé d'autres approches ? Comme quand on hésite entre une galette et une crêpe sucrée."
+      placeholder: "On pourrait aussi simplement ajouter un flag --complet au CLI existant, mais ça manquerait de panache..."
+
+  - type: textarea
+    id: mockup
+    attributes:
+      label: "🎨 Croquis de la galette (maquette)"
+      description: "Si vous avez un aperçu visuel, un schéma ASCII ou une maquette, partagez-le ici."
+      placeholder: |
+        ```
+        ┌─────────────────────────────┐
+        │    🧈 GALETTE COMPLÈTE     │
+        │  ┌───────┬───────┬───────┐  │
+        │  │ Lint  │ Test  │ Build │  │
+        │  │  🧹   │  🧪   │  🔥   │  │
+        │  └───────┴───────┴───────┘  │
+        │     Temps total: 42s 🥞     │
+        └─────────────────────────────┘
+        ```
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "✅ Checklist de la recette"
+      options:
+        - label: "Ma feature utilise du beurre salé (pas de beurre doux dans ce projet)"
+          required: true
+        - label: "J'ai vérifié qu'une feature similaire n'est pas déjà en cuisson"
+          required: true
+        - label: "Je suis prêt·e à contribuer à l'implémentation (enfiler le tablier)"
+          required: false
+        - label: "J'ai consulté le coefficient de marée — le timing est bon"
+          required: false

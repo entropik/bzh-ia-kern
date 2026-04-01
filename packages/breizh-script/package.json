@@ -1,0 +1,137 @@
+{
+  "name": "breizh-script",
+  "displayName": "Breizh Script — Syntaxe Regionale Souveraine",
+  "description": "Transformez votre code JavaScript/TypeScript en Breizh Script, le premier langage de programmation a obtenir l'IGP Bretagne. Parce que le futur du dev est artisanal, local et au beurre sale.",
+  "version": "2.0.0",
+  "publisher": "ooblik",
+  "license": "WTFPL",
+  "icon": "assets/kreisker.png",
+  "galleryBanner": {
+    "color": "#000000",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ooblik/breizh-script"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Formatters",
+    "Linters"
+  ],
+  "keywords": [
+    "bretagne",
+    "crepes",
+    "souverainete-numerique",
+    "beurre-sale",
+    "breton",
+    "krampouz",
+    "galette-saucisse",
+    "gwenn-ha-du",
+    "devops-artisanal",
+    "cloud-souverain-breton",
+    "NLP-celtique",
+    "terroir-driven-development"
+  ],
+  "activationEvents": [
+    "onLanguage:breizh",
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onCommand:breizh-script.translate",
+    "onCommand:breizh-script.krampouz-mode"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "breizh",
+        "aliases": [
+          "Breizh Script",
+          "breizh",
+          "bzh"
+        ],
+        "extensions": [
+          ".bzh",
+          ".kreiz",
+          ".galette"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "breizh",
+        "scopeName": "source.breizh",
+        "path": "./syntaxes/breizh.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "breizh-script.translate",
+        "title": "Breizh Script: Traduire en Breton",
+        "category": "Breizh"
+      },
+      {
+        "command": "breizh-script.krampouz-mode",
+        "title": "Breizh Script: Activer le Mode Krampouz 🥞",
+        "category": "Breizh"
+      },
+      {
+        "command": "breizh-script.revert",
+        "title": "Breizh Script: Revenir au Francais (trahison)",
+        "category": "Breizh"
+      }
+    ],
+    "configuration": {
+      "title": "Breizh Script",
+      "properties": {
+        "breizh-script.dialect": {
+          "type": "string",
+          "default": "cornouaillais",
+          "enum": [
+            "cornouaillais",
+            "leonard",
+            "tregerois",
+            "vannetais"
+          ],
+          "description": "Dialecte breton a utiliser pour la transpilation semantique regionale"
+        },
+        "breizh-script.beurre": {
+          "type": "string",
+          "default": "sale",
+          "enum": [
+            "sale",
+            "doux"
+          ],
+          "description": "Type de beurre. WARNING: selectionner 'doux' declenchera un avertissement a chaque sauvegarde"
+        },
+        "breizh-script.krampouz.temperature": {
+          "type": "number",
+          "default": 220,
+          "description": "Temperature de la bilig en degres. Affecte la vitesse de transpilation."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "test": "jest --config jest.config.bzh.js"
+  },
+  "dependencies": {
+    "vscode": "^1.1.37",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.11.0",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0"
+  }
+}

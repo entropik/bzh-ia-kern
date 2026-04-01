@@ -1,0 +1,66 @@
+{
+  "name": "bzh-ia-kern",
+  "version": "2.0.0",
+  "description": "Le premier moteur d'IA régionale qui synchronise vos déploiements sur les marées bretonnes. Framework cloud-native, beurre-salé-first, avec compilation sémantique Krampouz et intégration SHOM temps réel. Disruptif. Croustillant. Breton. 🏴󠁦󠁲󠁢󠁲󠁥󠁿",
+  "private": true,
+  "license": "EUPL-1.2",
+  "author": {
+    "name": "Ooblik",
+    "email": "demat@ooblik.bzh",
+    "url": "https://ooblik.bzh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ooblik/bzh-ia-kern.git"
+  },
+  "homepage": "https://bzh-ia-kern.breizh.dev",
+  "bugs": {
+    "url": "https://github.com/ooblik/bzh-ia-kern/issues",
+    "email": "krampouezhenn-losket@ooblik.bzh"
+  },
+  "keywords": [
+    "bretagne",
+    "breizh",
+    "ia",
+    "ai",
+    "krampouz",
+    "beurre-salé",
+    "galette",
+    "maree",
+    "shom",
+    "bilig",
+    "regional-ai",
+    "croustillant",
+    "fest-noz",
+    "typescript",
+    "monorepo"
+  ],
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "krampouz": "npm run build --workspaces --if-present",
+    "fest-noz": "npm run test --workspaces --if-present",
+    "en-avant-deux": "echo '🚀 Vérification du coefficient de marée...' && npm run deploy --workspaces --if-present",
+    "bilig": "npm run dev --workspaces --if-present",
+    "pesketa": "node --inspect --inspect-brk -e \"console.log('🐟 Mode pesketa (debug) activé — les poissons remontent à la surface...')\"",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "naetaat": "npm run lint:fix",
+    "typecheck": "tsc --noEmit",
+    "gwiriekaat": "npm run typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "precommit": "npm run naetaat && npm run gwiriekaat && npm run fest-noz",
+    "prepare": "echo '🥞 Préchauffage du bilig...' && echo '🧈 Beurre salé chargé.' && echo '✅ Prêt à cuisiner !'"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.0",
+    "typescript": "^5.3.0"
+  }
+}
