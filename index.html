@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BZH-IA-KERN — Le premier framework culturellement souverain</title>
+  <meta name="description" content="Injectez du beurre salé dans votre stack. Framework de développement 100% terroir breton.">
+  <meta property="og:title" content="BZH-IA-KERN — Framework culturellement souverain">
+  <meta property="og:description" content="8 500+ lignes de code 100% terroir breton. Breizh Script, Krampouz Annotator, Middleware C.I.D.R.E.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://entropik.github.io/bzh-ia-kern/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #09090b;
+      color: #e4e4e7;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --accent: #60a5fa;
+      --accent-2: #a78bfa;
+      --gold: #fbbf24;
+      --green: #34d399;
+      --orange: #fb923c;
+      --bg-card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+      --glow: rgba(96,165,250,0.15);
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --max-w: 1200px;
+    }
+
+    /* ===== TIDE BANNER ===== */
+    .tide-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1001;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-align: center;
+      transition: background 0.6s ease, color 0.6s ease;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      letter-spacing: 0.02em;
+      font-family: var(--font-mono);
+    }
+    .tide-banner.low { background: rgba(251,146,60,0.15); color: var(--orange); border-bottom: 1px solid rgba(251,146,60,0.2); }
+    .tide-banner.normal { background: rgba(96,165,250,0.12); color: var(--accent); border-bottom: 1px solid rgba(96,165,250,0.15); }
+    .tide-banner.high { background: rgba(52,211,153,0.12); color: var(--green); border-bottom: 1px solid rgba(52,211,153,0.15); }
+    .tide-banner.equinox {
+      background: linear-gradient(90deg, rgba(251,191,36,0.2), rgba(251,146,60,0.2), rgba(251,191,36,0.2));
+      color: var(--gold);
+      border-bottom: 1px solid rgba(251,191,36,0.3);
+      animation: equinoxPulse 2s ease-in-out infinite;
+    }
+    @keyframes equinoxPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .tide-banner .port { opacity: 0.6; margin-left: 12px; font-size: 0.72rem; }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 30px;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 0 24px;
+      transition: top 0.3s ease;
+    }
+    .navbar-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: rgba(9,9,11,0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    .navbar-logo {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+    .navbar-logo .anchor { font-size: 1.3rem; }
+    .version-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(96,165,250,0.15), rgba(167,139,250,0.15));
+      border: 1px solid rgba(96,165,250,0.2);
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+    .navbar-links a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #a1a1aa;
+      transition: color 0.2s;
+    }
+    .navbar-links a:hover { color: #fff; }
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: #e4e4e7;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 140px 24px 80px;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 900px;
+      background: radial-gradient(circle, rgba(96,165,250,0.12) 0%, rgba(167,139,250,0.06) 40%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: #a1a1aa;
+      margin-bottom: 32px;
+      font-weight: 500;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+    @keyframes dotPulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(52,211,153,0.4); }
+      50% { opacity: 0.6; box-shadow: 0 0 0 6px rgba(52,211,153,0); }
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5.5vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      max-width: 800px;
+      margin-bottom: 24px;
+      background: linear-gradient(135deg, #fff 0%, #60a5fa 50%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.03em;
+    }
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: #a1a1aa;
+      max-width: 600px;
+      margin-bottom: 40px;
+      line-height: 1.7;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 56px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      color: #fff;
+      box-shadow: 0 0 30px rgba(96,165,250,0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(96,165,250,0.45);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: #e4e4e7;
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
+    }
+
+    /* ===== CODE BLOCK ===== */
+    .hero-code {
+      position: relative;
+      max-width: 560px;
+      width: 100%;
+      text-align: left;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: #71717a;
+      font-family: var(--font-mono);
+    }
+    .code-dots {
+      display: flex;
+      gap: 6px;
+      margin-right: 10px;
+    }
+    .code-dots span {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .code-dots span:nth-child(1) { background: #ef4444; }
+    .code-dots span:nth-child(2) { background: #eab308; }
+    .code-dots span:nth-child(3) { background: #22c55e; }
+    .code-body {
+      padding: 20px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+    .code-body .kw { color: #c084fc; }
+    .code-body .fn { color: #60a5fa; }
+    .code-body .str { color: #34d399; }
+    .code-body .var { color: #fbbf24; }
+    .code-body .cm { color: #52525b; font-style: italic; }
+    .code-body .op { color: #a1a1aa; }
+    .typing-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--accent);
+      animation: blink 1s step-end infinite;
+      vertical-align: text-bottom;
+      margin-left: 2px;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ===== WAVE ANIMATION ===== */
+    .wave-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 120px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .wave {
+      position: absolute;
+      bottom: -10px;
+      left: -5%;
+      width: 110%;
+      height: 100%;
+      opacity: 0.04;
+    }
+    .wave svg {
+      width: 100%;
+      height: 100%;
+    }
+    .wave:nth-child(1) { animation: waveMove 8s ease-in-out infinite; }
+    .wave:nth-child(2) { animation: waveMove 11s ease-in-out infinite reverse; opacity: 0.02; bottom: 5px; }
+    @keyframes waveMove {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(-3%); }
+    }
+
+    /* ===== SECTIONS ===== */
+    section {
+      padding: 100px 24px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      color: #fafafa;
+    }
+    .section-desc {
+      color: #a1a1aa;
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin-bottom: 48px;
+      line-height: 1.7;
+    }
+
+    /* ===== ECOSYSTEM CARDS ===== */
+    .eco-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .eco-card {
+      position: relative;
+      padding: 32px 28px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: all 0.35s ease;
+      overflow: hidden;
+    }
+    .eco-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(96,165,250,0.3), rgba(167,139,250,0.1), transparent);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    .eco-card:hover::before { opacity: 1; }
+    .eco-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(96,165,250,0.08);
+      background: rgba(255,255,255,0.06);
+    }
+    .eco-icon {
+      font-size: 2.2rem;
+      margin-bottom: 18px;
+      display: block;
+    }
+    .eco-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #fafafa;
+    }
+    .eco-card p {
+      color: #a1a1aa;
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+    .eco-tag {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      background: rgba(96,165,250,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(96,165,250,0.15);
+    }
+
+    /* ===== BENCHMARKS ===== */
+    .bench-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .bench-item {
+      text-align: center;
+      padding: 36px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+    .bench-item:hover {
+      border-color: rgba(96,165,250,0.2);
+      box-shadow: 0 0 30px rgba(96,165,250,0.06);
+    }
+    .bench-value {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .bench-suffix {
+      font-size: 0.6em;
+      opacity: 0.7;
+    }
+    .bench-label {
+      color: #a1a1aa;
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+    .bench-note {
+      color: #52525b;
+      font-size: 0.78rem;
+      font-style: italic;
+      text-align: center;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ===== COMPARATIF TABLE ===== */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .compare-table thead th {
+      padding: 16px 24px;
+      text-align: left;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #a1a1aa;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .compare-table thead th:first-child { color: #fafafa; }
+    .compare-table tbody td {
+      padding: 14px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      vertical-align: middle;
+    }
+    .compare-table tbody tr:last-child td { border-bottom: none; }
+    .compare-table tbody tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+    .compare-table tbody tr:hover { background: rgba(96,165,250,0.04); }
+    .compare-table .feature { color: #e4e4e7; font-weight: 500; }
+    .compare-table .bzh { color: var(--green); font-weight: 600; }
+    .compare-table .other { color: #71717a; }
+
+    /* ===== TESTIMONIALS ===== */
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .testi-card {
+      padding: 32px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+    .testi-card:hover {
+      border-color: rgba(96,165,250,0.15);
+      transform: translateY(-2px);
+    }
+    .testi-quote {
+      font-size: 1rem;
+      color: #d4d4d8;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      font-style: italic;
+      position: relative;
+      padding-left: 20px;
+      border-left: 2px solid rgba(96,165,250,0.3);
+    }
+    .testi-author {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .testi-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .testi-avatar.a1 { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+    .testi-avatar.a2 { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+    .testi-avatar.a3 { background: linear-gradient(135deg, #34d399, #059669); }
+    .testi-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #fafafa;
+    }
+    .testi-role {
+      font-size: 0.78rem;
+      color: #71717a;
+    }
+
+    /* ===== CTA SECTION ===== */
+    .cta-section {
+      text-align: center;
+      padding: 80px 24px 100px;
+      position: relative;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(167,139,250,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      color: #fafafa;
+    }
+    .cta-section p {
+      color: #a1a1aa;
+      font-size: 1.05rem;
+      margin-bottom: 36px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .footer-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .footer-links {
+      display: flex;
+      gap: 28px;
+      justify-content: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: #71717a;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-made {
+      color: #52525b;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+    .footer-copy {
+      color: #3f3f46;
+      font-size: 0.78rem;
+      margin-bottom: 6px;
+    }
+    .footer-kenavo {
+      color: #52525b;
+      font-size: 0.82rem;
+      font-style: italic;
+      margin-top: 12px;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-in-delay-1 { transition-delay: 0.1s; }
+    .fade-in-delay-2 { transition-delay: 0.2s; }
+    .fade-in-delay-3 { transition-delay: 0.3s; }
+
+    /* ===== DIVIDER ===== */
+    .section-divider {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .navbar-links { display: none; }
+      .navbar-links.open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        left: 16px;
+        right: 16px;
+        background: rgba(9,9,11,0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px;
+        gap: 16px;
+      }
+      .mobile-toggle { display: block; }
+      section { padding: 60px 20px; }
+      .eco-grid { grid-template-columns: 1fr; }
+      .bench-grid { grid-template-columns: repeat(2, 1fr); }
+      .testi-grid { grid-template-columns: 1fr; }
+      .hero { padding: 120px 20px 60px; }
+      .hero-code { font-size: 0.75rem; }
+      .tide-banner { font-size: 0.7rem; padding: 5px 12px; }
+      .tide-banner .port { display: none; }
+    }
+    @media (max-width: 480px) {
+      .bench-grid { grid-template-columns: 1fr; }
+      .hero-buttons { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TIDE BANNER -->
+  <div class="tide-banner normal" id="tideBanner">
+    <span id="tideContent">🌊 Conditions de deploiement — Coefficient de maree : -- — ⛵ Chargement...</span>
+    <span class="port">Port de reference : Douarnenez</span>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="#" class="navbar-logo">
+        <span class="anchor">⚓</span>
+        BZH-IA-KERN
+        <span class="version-badge">v2.0 Kouign-Amann</span>
+      </a>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">☰</button>
+      <ul class="navbar-links" id="navLinks">
+        <li><a href="#ecosystem">Ecosysteme</a></li>
+        <li><a href="./playground/">Playground</a></li>
+        <li><a href="https://github.com/entropik/bzh-ia-kern/tree/main/docs">Docs</a></li>
+        <li><a href="https://github.com/entropik/bzh-ia-kern">GitHub</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-badge fade-in">
+      <span class="dot"></span>
+      Open Source &bull; Licence EUPL-1.2 &bull; Made in Breizh
+    </div>
+
+    <h1 class="fade-in fade-in-delay-1">Le premier framework de developpement culturellement souverain</h1>
+
+    <p class="hero-subtitle fade-in fade-in-delay-2">
+      Injectez du beurre sale dans votre stack. 8 500+ lignes de code 100% terroir breton.
+    </p>
+
+    <div class="hero-buttons fade-in fade-in-delay-3">
+      <a href="./playground/" class="btn btn-primary">Essayer le Playground 🥞</a>
+      <a href="https://github.com/entropik/bzh-ia-kern" class="btn btn-secondary">Voir sur GitHub ⚓</a>
+    </div>
+
+    <div class="hero-code fade-in fade-in-delay-3">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        recette.bzh — Breizh Script
+      </div>
+      <div class="code-body" id="codeBlock">
+        <span class="cm">// deploiement galette-complete.bzh</span><br>
+        <span class="kw">krampouz</span> (<span class="fn">recette</span>.<span class="fn">isPret</span>()) {<br>
+        &nbsp;&nbsp;<span class="kw">bilig</span> (<span class="var">ingredient</span> <span class="kw">de</span> <span class="var">ingredients</span>) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">deplomat</span>(<span class="str">'en-avant-deux'</span>, <span class="var">ingredient</span>);<br>
+        &nbsp;&nbsp;}<br>
+        } <span class="kw">gwinizh_du</span> {<br>
+        &nbsp;&nbsp;<span class="fn">fest_noz</span>(<span class="str">'Diwall! Ar grampouezhenn a zo losket!'</span>);<br>
+        }<span class="typing-cursor"></span>
+      </div>
+    </div>
+
+    <div class="wave-container">
+      <div class="wave">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path d="M0,40 C360,100 720,0 1080,60 C1260,90 1380,40 1440,50 L1440,120 L0,120 Z" fill="#60a5fa"/>
+        </svg>
+      </div>
+      <div class="wave">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path d="M0,60 C240,10 480,100 720,40 C960,0 1200,80 1440,30 L1440,120 L0,120 Z" fill="#a78bfa"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ECOSYSTEM -->
+  <section id="ecosystem">
+    <div class="fade-in">
+      <p class="section-label">// packages</p>
+      <h2 class="section-title">L'Ecosysteme</h2>
+      <p class="section-desc">Quatre packages complementaires pour une stack bretonne de bout en bout. Compatible avec vos outils existants.</p>
+    </div>
+
+    <div class="eco-grid">
+      <div class="eco-card fade-in fade-in-delay-1">
+        <span class="eco-icon">🥞</span>
+        <h3>Breizh Script</h3>
+        <p>Syntaxe regionale souveraine pour VS Code. Coloration syntaxique, snippets, et linting adapte au terroir.</p>
+        <span class="eco-tag">@bzh/breizh-script</span>
+      </div>
+      <div class="eco-card fade-in fade-in-delay-1">
+        <span class="eco-icon">👩‍🍳</span>
+        <h3>Krampouz Annotator</h3>
+        <p>Analyse qualite code gastronomique. Labels qualite du &laquo;&nbsp;Beurre Sale Approved&nbsp;&raquo; au &laquo;&nbsp;Kouign-Amann Gold&nbsp;&raquo;.</p>
+        <span class="eco-tag">@bzh/krampouz</span>
+      </div>
+      <div class="eco-card fade-in fade-in-delay-2">
+        <span class="eco-icon">🍺</span>
+        <h3>Middleware C.I.D.R.E.</h3>
+        <p>CI/CD synchronise sur les marees. Deploiements automatiques indexes sur le coefficient de maree de Douarnenez.</p>
+        <span class="eco-tag">@bzh/cidre</span>
+      </div>
+      <div class="eco-card fade-in fade-in-delay-2">
+        <span class="eco-icon">🏴󠁦󠁲󠁢󠁲󠁥󠁿</span>
+        <h3>Emoji Commits</h3>
+        <p>Convention de commits bretonne. Chaque commit commence par un emoji regional pour une lisibilite maximale.</p>
+        <span class="eco-tag">@bzh/emoji-commits</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- BENCHMARKS -->
+  <section id="benchmarks">
+    <div class="fade-in">
+      <p class="section-label">// performance</p>
+      <h2 class="section-title">Benchmarks</h2>
+      <p class="section-desc">Des performances mesurees avec rigueur et beurre sale.</p>
+    </div>
+
+    <div class="bench-grid">
+      <div class="bench-item fade-in">
+        <div class="bench-value"><span class="counter" data-target="1337">0</span><span class="bench-suffix"></span></div>
+        <div class="bench-label">crepes/seconde</div>
+      </div>
+      <div class="bench-item fade-in fade-in-delay-1">
+        <div class="bench-value"><span class="counter" data-target="42">0</span><span class="bench-suffix">%</span></div>
+        <div class="bench-label">reduction dette technique</div>
+      </div>
+      <div class="bench-item fade-in fade-in-delay-2">
+        <div class="bench-value"><span class="counter" data-target="97">0</span><span class="bench-suffix">%</span></div>
+        <div class="bench-label">satisfaction developpeur</div>
+      </div>
+      <div class="bench-item fade-in fade-in-delay-3">
+        <div class="bench-value"><span class="counter" data-target="3" data-decimal="14">0</span><span class="bench-suffix">ms</span></div>
+        <div class="bench-label">latence moyenne</div>
+      </div>
+    </div>
+    <p class="bench-note fade-in">* Benchmarks realises sur un bilig prechauffe a 220°C avec du beurre Bordier AOP</p>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- COMPARATIF -->
+  <section id="compare">
+    <div class="fade-in">
+      <p class="section-label">// comparatif</p>
+      <h2 class="section-title">BZH-IA-KERN vs Solutions Anglo-Saxonnes</h2>
+      <p class="section-desc">Le choix est vite fait.</p>
+    </div>
+
+    <div class="table-wrapper fade-in">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Critere</th>
+            <th>⚓ BZH-IA-KERN</th>
+            <th>Solutions Anglo-Saxonnes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feature">Syntaxe</td>
+            <td class="bzh">✅ Bretonne souveraine</td>
+            <td class="other">❌ Anglaise mondialisee</td>
+          </tr>
+          <tr>
+            <td class="feature">CI/CD</td>
+            <td class="bzh">✅ Synchronise sur les marees</td>
+            <td class="other">❌ Deconnecte de la nature</td>
+          </tr>
+          <tr>
+            <td class="feature">Qualite code</td>
+            <td class="bzh">✅ Labels gastronomiques</td>
+            <td class="other">❌ Pass/Fail generique</td>
+          </tr>
+          <tr>
+            <td class="feature">Convention commits</td>
+            <td class="bzh">✅ 🥞 🧈 🌊 emojis terroir</td>
+            <td class="other">😐 feat: fix: chore: (ennuyeux)</td>
+          </tr>
+          <tr>
+            <td class="feature">Energie</td>
+            <td class="bzh">✅ Galettes de sarrasin</td>
+            <td class="other">❌ Venture Capital</td>
+          </tr>
+          <tr>
+            <td class="feature">Deploiement</td>
+            <td class="bzh">✅ Fest-Noz Driven</td>
+            <td class="other">❌ Sprint-based</td>
+          </tr>
+          <tr>
+            <td class="feature">Licence</td>
+            <td class="bzh">✅ EUPL-1.2 (europeenne)</td>
+            <td class="other">⚠️ MIT/Apache (US-centric)</td>
+          </tr>
+          <tr>
+            <td class="feature">Gout</td>
+            <td class="bzh">✅ Beurre sale</td>
+            <td class="other">❌ Aucun</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="fade-in">
+      <p class="section-label">// temoignages</p>
+      <h2 class="section-title">Ils l'ont adopte</h2>
+      <p class="section-desc">Retours d'experience de la communaute BZH-IA-KERN.</p>
+    </div>
+
+    <div class="testi-grid">
+      <div class="testi-card fade-in">
+        <p class="testi-quote">"Depuis qu'on est passe sur BZH-IA-KERN, nos deploiements sentent le beurre sale."</p>
+        <div class="testi-author">
+          <div class="testi-avatar a1">YL</div>
+          <div>
+            <div class="testi-name">Yann L.</div>
+            <div class="testi-role">CTO @ Creperie du Port</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card fade-in fade-in-delay-1">
+        <p class="testi-quote">"Le Krampouz Annotator a revolutionne nos code reviews. On ne merge plus sans le label Beurre Sale Approved."</p>
+        <div class="testi-author">
+          <div class="testi-avatar a2">MK</div>
+          <div>
+            <div class="testi-name">Maelle K.</div>
+            <div class="testi-role">Lead Dev @ Fest-Noz Labs</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card fade-in fade-in-delay-2">
+        <p class="testi-quote">"L'integration avec les marees de Douarnenez a reduit nos incidents en prod de 73%."</p>
+        <div class="testi-author">
+          <div class="testi-avatar a3">GM</div>
+          <div>
+            <div class="testi-name">Gurvan M.</div>
+            <div class="testi-role">SRE @ Menhir Cloud</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- CTA FINAL -->
+  <section class="cta-section">
+    <h2 class="fade-in">Pret a bretonniser votre stack ?</h2>
+    <p class="fade-in fade-in-delay-1">Rejoignez les developpeurs qui ont choisi la souverainete culinaire et culturelle.</p>
+    <div class="cta-buttons fade-in fade-in-delay-2">
+      <a href="./playground/" class="btn btn-primary">Playground 🥞</a>
+      <a href="https://github.com/entropik/bzh-ia-kern" class="btn btn-secondary">GitHub ⚓</a>
+      <a href="https://www.npmjs.com/search?q=bzh-ia-kern" class="btn btn-secondary">npm 📦</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="https://github.com/entropik/bzh-ia-kern">GitHub</a>
+        <a href="https://github.com/entropik/bzh-ia-kern/tree/main/docs">Documentation</a>
+        <a href="./playground/">Playground</a>
+      </div>
+      <p class="footer-made">Fait avec ❤️ et 🧈 a Douarnenez</p>
+      <p class="footer-copy">&copy; 2025 Ooblik — Licence EUPL-1.2</p>
+      <p class="footer-kenavo">Kenavo les bugs, degemer mat la qualite ! 🏴󠁦󠁲󠁢󠁲󠁥󠁿</p>
+    </div>
+  </footer>
+
+  <script>
+    /* ===== TIDE BANNER ===== */
+    function updateTide() {
+      var banner = document.getElementById('tideBanner');
+      var content = document.getElementById('tideContent');
+      // Fake sinusoidal tide based on time — cycle of ~12h25 (44700s)
+      var now = Date.now() / 1000;
+      var cycle = 44700;
+      var phase = (now % cycle) / cycle * 2 * Math.PI;
+      // Coefficient between 20 and 110
+      var coeff = Math.round(65 + 45 * Math.sin(phase));
+      var status, cls;
+      if (coeff < 40) {
+        status = "\u26a0\ufe0f Maree basse — Deploiements ralentis";
+        cls = "low";
+      } else if (coeff <= 70) {
+        status = "\u26f5 Conditions normales";
+        cls = "normal";
+      } else if (coeff <= 90) {
+        status = "\ud83c\udfc4 Grande maree — Conditions optimales";
+        cls = "high";
+      } else {
+        status = "\ud83c\udf0a MAREE D'EQUINOXE — Performance x2 !";
+        cls = "equinox";
+      }
+      banner.className = "tide-banner " + cls;
+      content.textContent = "\ud83c\udf0a Conditions de deploiement — Coefficient de maree : " + coeff + " — " + status;
+    }
+    updateTide();
+    setInterval(updateTide, 60000);
+
+    /* ===== MOBILE NAV ===== */
+    document.getElementById('mobileToggle').addEventListener('click', function() {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    /* ===== INTERSECTION OBSERVER (fade-in) ===== */
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(function(el) {
+      observer.observe(el);
+    });
+
+    /* ===== COUNTER ANIMATION ===== */
+    var counterObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var el = entry.target;
+          if (el.dataset.counted) return;
+          el.dataset.counted = '1';
+          var target = parseInt(el.dataset.target);
+          var decimal = el.dataset.decimal;
+          var duration = 2000;
+          var start = performance.now();
+          function animate(now) {
+            var elapsed = now - start;
+            var progress = Math.min(elapsed / duration, 1);
+            // Ease out cubic
+            var ease = 1 - Math.pow(1 - progress, 3);
+            var current = Math.round(target * ease);
+            if (decimal && progress >= 1) {
+              el.textContent = target + '.' + decimal;
+            } else if (decimal) {
+              var full = target + parseInt(decimal) / 100;
+              var val = (full * ease).toFixed(2);
+              el.textContent = val;
+            } else {
+              el.textContent = current.toLocaleString('fr-FR');
+            }
+            if (progress < 1) requestAnimationFrame(animate);
+          }
+          requestAnimationFrame(animate);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.counter').forEach(function(el) {
+      counterObserver.observe(el);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BZH-IA-KERN Playground — Breizh Script Transpiler</title>
+  <meta name="description" content="Playground interactif BZH-IA-KERN : transpilez du JavaScript en Breizh Script en temps reel." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #111827;
+      --bg-tertiary: #1a2233;
+      --bg-card: #151d2e;
+      --border: #1e293b;
+      --border-highlight: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #22d3ee;
+      --accent-teal: #14b8a6;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-green: #22c55e;
+      --accent-purple: #a78bfa;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'Space Grotetz', 'Fira Code', 'Cascadia Code', monospace;
+      --font-heading: 'Space Grotesk', 'Inter', sans-serif;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --transition: 0.2s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- TIDE BANNER ---- */
+    .tide-banner {
+      background: linear-gradient(90deg, #0c1929 0%, #0f2337 50%, #0c1929 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 6px 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .tide-banner::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-cyan), var(--accent-blue), var(--accent-teal), transparent);
+      animation: tide-shimmer 4s ease-in-out infinite;
+    }
+    @keyframes tide-shimmer {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    .tide-coeff {
+      font-weight: 600;
+      color: var(--accent-cyan);
+      font-family: var(--font-heading);
+    }
+    .tide-status { font-weight: 500; }
+
+    /* ---- HEADER ---- */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.02em;
+    }
+    .logo:hover { color: var(--accent-cyan); }
+    .logo-anchor { font-size: 22px; }
+    .header-sep {
+      width: 1px;
+      height: 24px;
+      background: var(--border-highlight);
+    }
+    .header-playground {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(34,211,238,0.15));
+      border: 1px solid rgba(59,130,246,0.3);
+      color: var(--accent-cyan);
+      font-family: var(--font-heading);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+    .header-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .header-link:hover {
+      color: var(--text-primary);
+      background: rgba(255,255,255,0.05);
+    }
+    .header-link svg { width: 18px; height: 18px; }
+
+    /* ---- TOOLBAR ---- */
+    .toolbar {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .toolbar-sep {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+    .toolbar select,
+    .toolbar button {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      border: 1px solid var(--border-highlight);
+      border-radius: var(--radius);
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .toolbar select:hover,
+    .toolbar button:hover {
+      border-color: var(--accent-blue);
+      color: var(--text-primary);
+      background: rgba(59,130,246,0.08);
+    }
+    .toolbar select:focus,
+    .toolbar button:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-blue), #2563eb) !important;
+      color: #fff !important;
+      border-color: var(--accent-blue) !important;
+      font-weight: 600;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4f8ff7, var(--accent-blue)) !important;
+      box-shadow: 0 0 16px rgba(59,130,246,0.3);
+    }
+    .examples-select {
+      min-width: 170px;
+    }
+
+    /* ---- EDITOR AREA ---- */
+    .editor-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .editors-container {
+      display: flex;
+      flex: 1;
+      min-height: 420px;
+      position: relative;
+    }
+    .editor-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      position: relative;
+    }
+    .editor-pane + .editor-pane {
+      border-left: 1px solid var(--border);
+    }
+    .pane-header {
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 38px;
+    }
+    .pane-title {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pane-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .pane-dot-blue { background: var(--accent-blue); }
+    .pane-dot-teal { background: var(--accent-teal); }
+    .pane-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    .editor-mount {
+      flex: 1;
+      min-height: 380px;
+    }
+    .arrow-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .arrow-divider svg {
+      color: var(--text-muted);
+      opacity: 0.6;
+      animation: pulse-arrow 2s ease-in-out infinite;
+    }
+    @keyframes pulse-arrow {
+      0%, 100% { opacity: 0.4; transform: translateX(0); }
+      50% { opacity: 1; transform: translateX(2px); }
+    }
+
+    /* ---- KRAMPOUZ SCORE ---- */
+    .krampouz-section {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      padding: 24px;
+    }
+    .krampouz-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .krampouz-title {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .krampouz-grade {
+      font-size: 14px;
+      font-weight: 600;
+      padding: 4px 14px;
+      border-radius: 20px;
+    }
+    .krampouz-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      transition: all var(--transition);
+    }
+    .metric-card:hover {
+      border-color: var(--border-highlight);
+      transform: translateY(-1px);
+    }
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .metric-value {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .metric-bar {
+      height: 4px;
+      border-radius: 2px;
+      background: var(--bg-tertiary);
+      overflow: hidden;
+    }
+    .metric-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+    .badges-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+    }
+    .badges-card .metric-label { margin-bottom: 12px; }
+    .badges-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .code-badge {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    /* ---- SCORE BAR ---- */
+    .score-bar-wrap {
+      margin-bottom: 20px;
+    }
+    .score-bar-track {
+      height: 8px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease, background 0.5s ease;
+    }
+
+    /* ---- FOOTER ---- */
+    .footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .footer a:hover { color: var(--accent-cyan); }
+    .footer-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 900px) {
+      .editors-container {
+        flex-direction: column;
+      }
+      .editor-pane + .editor-pane {
+        border-left: none;
+        border-top: 1px solid var(--border);
+      }
+      .arrow-divider {
+        width: 100%;
+        height: 32px;
+        border-left: none;
+        border-right: none;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+      }
+      .arrow-divider svg { transform: rotate(90deg); }
+      @keyframes pulse-arrow {
+        0%, 100% { opacity: 0.4; transform: rotate(90deg) translateX(0); }
+        50% { opacity: 1; transform: rotate(90deg) translateX(2px); }
+      }
+      .editor-mount { min-height: 260px; }
+      .krampouz-body {
+        grid-template-columns: 1fr 1fr;
+      }
+      .toolbar { padding: 8px 12px; }
+      .header { padding: 0 12px; }
+      .krampouz-section { padding: 16px; }
+    }
+    @media (max-width: 520px) {
+      .krampouz-body { grid-template-columns: 1fr; }
+      .header-link span { display: none; }
+      .badge { display: none; }
+    }
+
+    /* ---- TOAST ---- */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--accent-green);
+      color: var(--text-primary);
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Loading overlay */
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .loading-spinner {
+      width: 24px; height: 24px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent-cyan);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 10px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- TIDE BANNER -->
+  <div class="tide-banner">
+    <span id="tide-text"></span>
+  </div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <a href="../" class="logo">
+        <span class="logo-anchor">&#9875;</span>
+        BZH-IA-KERN
+      </a>
+      <div class="header-sep"></div>
+      <span class="header-playground">Playground</span>
+      <span class="badge">v2.0 Kouign-Amann</span>
+    </div>
+    <div class="header-right">
+      <a href="../" class="header-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <span>Retour</span>
+      </a>
+      <a href="https://github.com/entropik/bzh-ia-kern" target="_blank" rel="noopener" class="header-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12 24 5.37 18.63 0 12 0z"/></svg>
+        <span>GitHub</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="toolbar-group">
+      <select class="examples-select" id="examples-select">
+        <option value="default">Hello Krampouz</option>
+        <option value="fibonacci">Fibonacci Galette</option>
+        <option value="api-maree">API Maree</option>
+        <option value="creperie">Creperie Class</option>
+      </select>
+    </div>
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-group">
+      <button class="btn-primary" id="btn-translate">Traduire &#8594;</button>
+    </div>
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-group">
+      <select id="dialect-select">
+        <option value="cornouaillais">Cornouaillais</option>
+        <option value="leonard">Leonard</option>
+        <option value="tregorrois">Tregorrois</option>
+        <option value="vannetais">Vannetais</option>
+      </select>
+      <select id="beurre-select">
+        <option value="sale">Beurre Sale</option>
+        <option value="demi-sel">Demi-sel</option>
+      </select>
+    </div>
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-group">
+      <button id="btn-copy">&#128203; Copier</button>
+      <button id="btn-reset">&#128260; Reinitialiser</button>
+      <button id="btn-rapport">&#128202; Rapport Krampouz</button>
+    </div>
+  </div>
+
+  <!-- EDITORS -->
+  <div class="editor-area">
+    <div class="editors-container">
+      <!-- LEFT PANE -->
+      <div class="editor-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <span class="pane-dot pane-dot-blue"></span>
+            JavaScript / TypeScript
+          </div>
+          <span class="pane-label">source</span>
+        </div>
+        <div id="editor-left" class="editor-mount">
+          <div class="loading-overlay" id="loading-left">
+            <div class="loading-spinner"></div>
+            Chargement de Monaco...
+          </div>
+        </div>
+      </div>
+
+      <!-- ARROW DIVIDER -->
+      <div class="arrow-divider">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </div>
+
+      <!-- RIGHT PANE -->
+      <div class="editor-pane">
+        <div class="pane-header">
+          <div class="pane-title">
+            <span class="pane-dot pane-dot-teal"></span>
+            Breizh Script &#127988;&#917607;&#917606;&#917618;&#917602;&#917618;&#917605;&#917631;
+          </div>
+          <span class="pane-label">sortie (lecture seule)</span>
+        </div>
+        <div id="editor-right" class="editor-mount">
+          <div class="loading-overlay" id="loading-right">
+            <div class="loading-spinner"></div>
+            Chargement...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KRAMPOUZ SCORE -->
+  <section class="krampouz-section" id="krampouz-section">
+    <div class="krampouz-header">
+      <div class="krampouz-title">
+        &#128202; Krampouz Score
+        <span class="krampouz-grade" id="krampouz-grade"></span>
+      </div>
+      <span id="krampouz-score-num" style="font-family:var(--font-heading);font-size:24px;font-weight:700;"></span>
+    </div>
+    <div class="score-bar-wrap">
+      <div class="score-bar-track">
+        <div class="score-bar-fill" id="score-bar-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="krampouz-body">
+      <div class="metric-card">
+        <div class="metric-label">&#129372; Indice de croustillance</div>
+        <div class="metric-value" id="metric-croustillance">0</div>
+        <div class="metric-bar"><div class="metric-bar-fill" id="bar-croustillance" style="width:0%;background:var(--accent-amber)"></div></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">&#129480; Taux de beurre</div>
+        <div class="metric-value" id="metric-beurre">0%</div>
+        <div class="metric-bar"><div class="metric-bar-fill" id="bar-beurre" style="width:0%;background:var(--accent-cyan)"></div></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">&#127777;&#65039; Temperature du bilig</div>
+        <div class="metric-value" id="metric-bilig">0&deg;C</div>
+        <div class="metric-bar"><div class="metric-bar-fill" id="bar-bilig" style="width:0%;background:var(--accent-red)"></div></div>
+      </div>
+      <div class="badges-card">
+        <div class="metric-label">&#127942; Badges</div>
+        <div class="badges-list" id="badges-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div>Fait avec &#10084;&#65039; et &#129480; a Douarnenez &mdash; &copy; 2025 Ooblik</div>
+    <div class="footer-links">
+      <a href="../">Accueil</a>
+      <a href="https://github.com/entropik/bzh-ia-kern" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </footer>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- MONACO LOADER -->
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+
+  <script>
+  (function() {
+    'use strict';
+
+    // ============================================================
+    // CODE EXAMPLES
+    // ============================================================
+    const EXAMPLES = {
+      'default': `// Bienvenue sur le Playground BZH-IA-KERN \u{1F95E}
+// Ecrivez du JavaScript, il sera traduit en Breizh Script !
+
+const beurre = "sale"; // toujours.
+
+async function preparerGalette(ingredients) {
+  if (ingredients.includes("beurre_doux")) {
+    throw new Error("Le beurre doux est interdit !");
+  }
+
+  for (const item of ingredients) {
+    console.log(\`Ajout de \${item} sur le bilig...\`);
+    await new Promise(r => setTimeout(r, 100));
+  }
+
+  return "\u{1F95E} Galette prete !";
+}
+
+try {
+  const resultat = await preparerGalette([
+    "sarrasin", "jambon", "fromage", "oeuf"
+  ]);
+  console.log(resultat);
+} catch (erreur) {
+  console.error("Fest-noz !", erreur);
+}`,
+
+      'fibonacci': `// Fibonacci Galette \u{1F95E}
+// Chaque nombre est une couche de galette
+
+function fibonacci(n) {
+  if (n <= 1) return n;
+
+  let a = 0;
+  let b = 1;
+
+  for (let i = 2; i <= n; i++) {
+    const temp = a + b;
+    a = b;
+    b = temp;
+  }
+
+  return b;
+}
+
+// Empiler 10 galettes
+for (let i = 0; i < 10; i++) {
+  const fib = fibonacci(i);
+  console.log(\`Galette #\${i} : \${fib} couches\`);
+}
+
+const resultat = fibonacci(42);
+console.log("La reponse ultime : " + resultat);`,
+
+      'api-maree': `// API Maree \u{1F30A}
+// Recuperer les coefficients de maree a Douarnenez
+
+async function fetchMaree(port) {
+  try {
+    const response = await fetch(
+      \`https://api.bzh-ia-kern.dev/maree/\${port}\`
+    );
+
+    if (!response.ok) {
+      throw new Error(\`Erreur HTTP: \${response.status}\`);
+    }
+
+    const data = await response.json();
+
+    for (const maree of data.coefficients) {
+      if (maree.value > 100) {
+        console.log(\`\u{26A0}\uFE0F Grande maree : \${maree.value}\`);
+      } else {
+        console.log(\`Coefficient : \${maree.value}\`);
+      }
+    }
+
+    return data;
+  } catch (erreur) {
+    console.error("Impossible de joindre le port !", erreur);
+    return null;
+  }
+}
+
+const marees = await fetchMaree("douarnenez");
+if (marees === null) {
+  console.log("Le serveur est en maree basse...");
+}`,
+
+      'creperie': `// Creperie Class \u{1F95E}
+// Programmation orientee objet bretonne
+
+class Creperie {
+  constructor(nom, ville) {
+    this.nom = nom;
+    this.ville = ville;
+    this.galettes = [];
+    this.ouvert = true;
+  }
+
+  async preparerGalette(type, ingredients) {
+    if (!this.ouvert) {
+      throw new Error("La creperie est fermee !");
+    }
+
+    console.log(\`Preparation d'une \${type}...\`);
+
+    for (const ing of ingredients) {
+      await new Promise(r => setTimeout(r, 50));
+      console.log(\`  + \${ing}\`);
+    }
+
+    const galette = { type, ingredients, prete: true };
+    this.galettes.push(galette);
+    return galette;
+  }
+
+  fermer() {
+    this.ouvert = false;
+    console.log(\`\${this.nom} ferme pour la saison.\`);
+  }
+}
+
+const maCreperie = new Creperie("Chez Jeanine", "Douarnenez");
+
+try {
+  const complete = await maCreperie.preparerGalette(
+    "complete",
+    ["sarrasin", "jambon", "fromage", "oeuf"]
+  );
+  console.log("Galette servie !", complete);
+} catch (e) {
+  console.error("Probleme en cuisine !", e);
+}`
+    };
+
+    // ============================================================
+    // TIDE CALCULATION
+    // ============================================================
+    function updateTide() {
+      const now = new Date();
+      const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes();
+      const cyclePeriod = 12 * 60 + 25;
+      const phase = (minutesSinceMidnight % cyclePeriod) / cyclePeriod * 2 * Math.PI;
+      const coeff = Math.round(50 + 45 * Math.sin(phase));
+      let status, emoji;
+      if (coeff >= 90) { status = 'Grande maree'; emoji = '\u{1F30A}\u{1F30A}'; }
+      else if (coeff >= 70) { status = 'Maree haute'; emoji = '\u{1F30A}'; }
+      else if (coeff >= 40) { status = 'Mi-maree'; emoji = '\u{1F3D6}\uFE0F'; }
+      else { status = 'Maree basse'; emoji = '\u{1F41A}'; }
+      document.getElementById('tide-text').innerHTML =
+        `${emoji} Coefficient de maree : <span class="tide-coeff">${coeff}</span> &mdash; <span class="tide-status">${status}</span> &mdash; Port de Douarnenez`;
+    }
+    updateTide();
+    setInterval(updateTide, 60000);
+
+    // ============================================================
+    // BREIZH SCRIPT TRANSLATOR
+    // ============================================================
+    const TRANSLATIONS = [
+      // Multi-word / dotted replacements first
+      ['console.error', 'sonner_du_biniou.fest_noz'],
+      ['console.log', 'sonner_du_biniou'],
+      ['setTimeout', 'gortoz_un_tamm'],
+      // Keywords
+      ['async', 'war_an_hent'],
+      ['await', 'gortoz'],
+      ['function', 'recette'],
+      ['const', 'menhir'],
+      ['let', 'korriganed'],
+      ['var', 'chouchenn'],
+      ['if', 'krampouz'],
+      ['else', 'gwinizh_du'],
+      ['for', 'bilig'],
+      ['while', 'bilig_tro'],
+      ['return', 'servi\u00F1'],
+      ['class', 'cr\u00EAperie'],
+      ['import', 'degemer'],
+      ['export', 'kenavo'],
+      ['try', 'tasta\u00F1'],
+      ['catch', 'fest_noz'],
+      ['throw', 'taol'],
+      ['new', 'nevez'],
+      ['null', 'mar\u00E9e_basse'],
+      ['undefined', 'bruma\u00F1'],
+      ['true', 'beurre_sal\u00E9'],
+      ['false', 'beurre_doux'],
+      ['Promise', 'Promesse_de_Marin'],
+      ['Error', 'FestNoz'],
+      ['includes', "endalc'h"],
+    ];
+
+    function tokenize(code) {
+      // Split code into tokens: strings, template literals, comments, and code segments
+      const tokens = [];
+      let i = 0;
+      const len = code.length;
+
+      while (i < len) {
+        // Single-line comment
+        if (code[i] === '/' && code[i+1] === '/') {
+          let end = code.indexOf('\n', i);
+          if (end === -1) end = len;
+          tokens.push({ type: 'comment', value: code.substring(i, end) });
+          i = end;
+          continue;
+        }
+
+        // Multi-line comment
+        if (code[i] === '/' && code[i+1] === '*') {
+          let end = code.indexOf('*/', i + 2);
+          if (end === -1) end = len; else end += 2;
+          tokens.push({ type: 'comment', value: code.substring(i, end) });
+          i = end;
+          continue;
+        }
+
+        // Template literal
+        if (code[i] === '`') {
+          let j = i + 1;
+          let val = '`';
+          while (j < len) {
+            if (code[j] === '\\') {
+              val += code[j] + (code[j+1] || '');
+              j += 2;
+              continue;
+            }
+            if (code[j] === '`') {
+              val += '`';
+              j++;
+              break;
+            }
+            val += code[j];
+            j++;
+          }
+          tokens.push({ type: 'string', value: val });
+          i = j;
+          continue;
+        }
+
+        // Strings (single or double quoted)
+        if (code[i] === '"' || code[i] === "'") {
+          const quote = code[i];
+          let j = i + 1;
+          let val = quote;
+          while (j < len) {
+            if (code[j] === '\\') {
+              val += code[j] + (code[j+1] || '');
+              j += 2;
+              continue;
+            }
+            if (code[j] === quote) {
+              val += quote;
+              j++;
+              break;
+            }
+            val += code[j];
+            j++;
+          }
+          tokens.push({ type: 'string', value: val });
+          i = j;
+          continue;
+        }
+
+        // Code (everything else, up to next string/comment start)
+        let j = i;
+        while (j < len) {
+          if (code[j] === '"' || code[j] === "'" || code[j] === '`') break;
+          if (code[j] === '/' && (code[j+1] === '/' || code[j+1] === '*')) break;
+          j++;
+        }
+        if (j > i) {
+          tokens.push({ type: 'code', value: code.substring(i, j) });
+        }
+        i = j;
+      }
+      return tokens;
+    }
+
+    function translateCode(segment) {
+      let result = segment;
+      for (const [from, to] of TRANSLATIONS) {
+        // For dotted expressions like console.log, do simple replacement
+        if (from.includes('.')) {
+          result = result.split(from).join(to);
+          continue;
+        }
+        // For keywords/identifiers: word-boundary replacement
+        const escaped = from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const re = new RegExp('\\b' + escaped + '\\b', 'g');
+        result = result.replace(re, to);
+      }
+      return result;
+    }
+
+    function translate(code) {
+      const tokens = tokenize(code);
+      return tokens.map(t => {
+        if (t.type === 'code') return translateCode(t.value);
+        return t.value;
+      }).join('');
+    }
+
+    // ============================================================
+    // KRAMPOUZ SCORE
+    // ============================================================
+    function computeKrampouz(code) {
+      const lines = code.split('\n');
+      const nonEmpty = lines.filter(l => l.trim().length > 0);
+      const totalLines = nonEmpty.length || 1;
+
+      // Croustillance: ratio of short lines (<=40 chars) to total
+      const shortLines = nonEmpty.filter(l => l.length <= 40).length;
+      const croustillance = Math.round((shortLines / totalLines) * 100);
+
+      // Taux de beurre: comment density
+      const commentLines = nonEmpty.filter(l => l.trim().startsWith('//')).length;
+      const beurre = Math.round((commentLines / totalLines) * 100);
+
+      // Temperature du bilig: max indentation depth
+      let maxIndent = 0;
+      for (const line of nonEmpty) {
+        const spaces = line.match(/^(\s*)/)[0].length;
+        const indent = Math.ceil(spaces / 2);
+        if (indent > maxIndent) maxIndent = indent;
+      }
+      const tempNorm = Math.min(maxIndent * 15, 100);
+      const tempCelsius = 150 + Math.round(tempNorm * 1.2);
+
+      // Global score
+      const score = Math.min(100, Math.round(croustillance * 0.35 + beurre * 0.35 + (100 - tempNorm) * 0.3));
+
+      // Grade
+      let grade, gradeColor;
+      if (score >= 85) { grade = '\u{1F451} Crepe Dentelle'; gradeColor = 'var(--accent-amber)'; }
+      else if (score >= 65) { grade = '\u{1F9C8} Beurre Sale Approved'; gradeColor = 'var(--accent-green)'; }
+      else if (score >= 40) { grade = '\u{1F95E} Passable'; gradeColor = 'var(--accent-blue)'; }
+      else { grade = '\u{1F525} Crepe Brulee'; gradeColor = 'var(--accent-red)'; }
+
+      // Badges
+      const badges = [];
+      if (commentLines >= 3) badges.push('\u{1F4DD} Bien documente');
+      if (totalLines >= 20) badges.push('\u{1F4CF} Code substantiel');
+      if (maxIndent <= 3) badges.push('\u2728 Code plat');
+      if (maxIndent >= 6) badges.push('\u{1F300} Inception');
+      if (code.includes('async')) badges.push('\u26A1 Asynchrone');
+      if (code.includes('class ')) badges.push('\u{1F3DB}\uFE0F POO');
+      if (code.includes('try')) badges.push('\u{1F6E1}\uFE0F Gestion erreurs');
+      if (code.includes('beurre')) badges.push('\u{1F9C8} Beurre lover');
+      if (code.includes('galette') || code.includes('Galette')) badges.push('\u{1F95E} Galettier');
+      if (totalLines <= 5) badges.push('\u{1F4A8} Minimaliste');
+      if (totalLines >= 40) badges.push('\u{1F4DA} Roman');
+
+      return { score, grade, gradeColor, croustillance, beurre, tempCelsius, tempNorm, badges };
+    }
+
+    function renderKrampouz(metrics) {
+      const {score, grade, gradeColor, croustillance, beurre, tempCelsius, tempNorm, badges} = metrics;
+
+      document.getElementById('krampouz-score-num').textContent = score + ' / 100';
+      document.getElementById('krampouz-score-num').style.color = gradeColor;
+
+      const gradeEl = document.getElementById('krampouz-grade');
+      gradeEl.textContent = grade;
+      gradeEl.style.background = gradeColor + '20';
+      gradeEl.style.color = gradeColor;
+      gradeEl.style.border = '1px solid ' + gradeColor + '40';
+
+      const barFill = document.getElementById('score-bar-fill');
+      barFill.style.width = score + '%';
+      barFill.style.background = `linear-gradient(90deg, ${gradeColor}, ${gradeColor}cc)`;
+
+      document.getElementById('metric-croustillance').textContent = croustillance;
+      document.getElementById('bar-croustillance').style.width = croustillance + '%';
+
+      document.getElementById('metric-beurre').textContent = beurre + '%';
+      document.getElementById('bar-beurre').style.width = beurre + '%';
+
+      document.getElementById('metric-bilig').innerHTML = tempCelsius + '&deg;C';
+      document.getElementById('bar-bilig').style.width = tempNorm + '%';
+
+      const badgesList = document.getElementById('badges-list');
+      badgesList.innerHTML = badges.map(b => `<span class="code-badge">${b}</span>`).join('');
+    }
+
+    // ============================================================
+    // TOAST
+    // ============================================================
+    let toastTimeout;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // ============================================================
+    // MONACO INIT
+    // ============================================================
+    let editorLeft, editorRight;
+    let debounceTimer;
+
+    function doTranslate() {
+      if (!editorLeft || !editorRight) return;
+      const code = editorLeft.getValue();
+      const result = translate(code);
+      editorRight.setValue(result);
+      renderKrampouz(computeKrampouz(code));
+    }
+
+    function scheduleTranslate() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(doTranslate, 300);
+    }
+
+    require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
+
+    require(['vs/editor/editor.main'], function () {
+      // Left editor (JS source)
+      editorLeft = monaco.editor.create(document.getElementById('editor-left'), {
+        value: EXAMPLES['default'],
+        language: 'javascript',
+        theme: 'vs-dark',
+        minimap: { enabled: false },
+        fontSize: 14,
+        automaticLayout: true,
+        scrollBeyondLastLine: false,
+        padding: { top: 12 },
+        lineNumbers: 'on',
+        renderLineHighlight: 'gutter',
+        tabSize: 2,
+      });
+
+      // Right editor (Breizh Script output)
+      editorRight = monaco.editor.create(document.getElementById('editor-right'), {
+        value: '',
+        language: 'plaintext',
+        theme: 'vs-dark',
+        minimap: { enabled: false },
+        fontSize: 14,
+        automaticLayout: true,
+        scrollBeyondLastLine: false,
+        padding: { top: 12 },
+        readOnly: true,
+        lineNumbers: 'on',
+        renderLineHighlight: 'none',
+        tabSize: 2,
+      });
+
+      // Hide loading overlays
+      document.getElementById('loading-left').style.display = 'none';
+      document.getElementById('loading-right').style.display = 'none';
+
+      // Initial translation
+      doTranslate();
+
+      // Live translation on change
+      editorLeft.onDidChangeModelContent(scheduleTranslate);
+    });
+
+    // ============================================================
+    // TOOLBAR ACTIONS
+    // ============================================================
+    document.getElementById('btn-translate').addEventListener('click', function() {
+      doTranslate();
+      showToast('Traduction effectuee !');
+    });
+
+    document.getElementById('btn-copy').addEventListener('click', function() {
+      if (!editorRight) return;
+      navigator.clipboard.writeText(editorRight.getValue()).then(() => {
+        showToast('Breizh Script copie dans le presse-papier !');
+      }).catch(() => {
+        showToast('Erreur lors de la copie');
+      });
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', function() {
+      if (!editorLeft) return;
+      editorLeft.setValue(EXAMPLES['default']);
+      document.getElementById('examples-select').value = 'default';
+      showToast('Editeur reinitialise !');
+    });
+
+    document.getElementById('btn-rapport').addEventListener('click', function() {
+      document.getElementById('krampouz-section').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    document.getElementById('examples-select').addEventListener('change', function() {
+      if (!editorLeft) return;
+      const key = this.value;
+      if (EXAMPLES[key]) {
+        editorLeft.setValue(EXAMPLES[key]);
+      }
+    });
+
+    // Dialect & beurre mode: cosmetic toasts
+    document.getElementById('dialect-select').addEventListener('change', function() {
+      const names = { cornouaillais: 'Cornouaillais', leonard: 'Leonard', tregorrois: 'Tregorrois', vannetais: 'Vannetais' };
+      showToast('Dialecte : ' + (names[this.value] || this.value));
+      doTranslate(); // same output, but feels interactive
+    });
+
+    document.getElementById('beurre-select').addEventListener('change', function() {
+      showToast('Mode beurre : ' + (this.value === 'sale' ? 'Sale (recommande)' : 'Demi-sel (acceptable)'));
+    });
+
+  })();
+  </script>
+</body>
+</html>
