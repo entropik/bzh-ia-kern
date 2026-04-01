@@ -14,7 +14,7 @@
 
 **Tokenisation sémantique · Paradigmes celtes · Beurre salé natif**
 
-[Documentation](https://bzh-ia-kern.dev/docs) · [Démo live](https://bzh-ia-kern.dev/playground) · [Discord #breizh-dev](https://discord.gg/breizh-dev)
+[Documentation](https://github.com/entropik/bzh-ia-kern/tree/main/docs) · [Démo live](https://entropik.github.io/bzh-ia-kern/playground/) · [Discord #breizh-dev](https://discord.gg/breizh-dev)
 
 </div>
 
