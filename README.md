@@ -295,7 +295,7 @@ Voir le fichier [LICENSE](LICENSE) pour les détails.
 
 ---
 
-Fait avec ❤️ et 🧈 à Douarnenez
+Fait avec ❤️ et 🧈 à Quimper
 
 *Kenavo les bugs, degemer mat la qualité !*
 
